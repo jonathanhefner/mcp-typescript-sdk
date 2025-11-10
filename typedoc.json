@@ -1,0 +1,20 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/client/index.ts",
+    "src/server/index.ts",
+    "src/validation/index.ts"
+  ],
+  "out": "./tmp/docs",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "readme": "./README.md",
+  "name": "@modelcontextprotocol/sdk",
+  "includeVersion": true,
+  "sort": ["source-order"],
+  "navigation": {
+    "includeCategories": true,
+    "includeFolders": true
+  }
+}

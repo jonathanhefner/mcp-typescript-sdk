@@ -1,0 +1,40 @@
+name: Deploy Documentation
+
+permissions:
+    contents: write
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    deploy-docs:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0  # Fetch all history for all branches
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build project
+              run: npm run build
+
+            - name: Extract tag name
+              id: get_tag
+              run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+            - name: Configure Git
+              run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Deploy documentation
+              run: ./scripts/deploy-docs.sh ${{ steps.get_tag.outputs.TAG_NAME }}
