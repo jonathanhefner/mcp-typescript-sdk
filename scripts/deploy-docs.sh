@@ -16,16 +16,19 @@ fi
 TAG_NAME="${1}"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 DOCS_OUTPUT_DIR="${REPO_ROOT}/tmp/docs"
-CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
 echo "Deploying documentation for tag: ${TAG_NAME}"
 
 # Clean up any previous documentation
 rm -rf "${DOCS_OUTPUT_DIR}"
 
-# Create temporary worktree for the tag
+# Create temporary directories for both worktrees
 WORKTREE_DIR=$(mktemp -d)
-trap 'git worktree remove --force "${WORKTREE_DIR}" 2>/dev/null || true' EXIT
+GHPAGES_WORKTREE_DIR=$(mktemp -d)
+
+# Set up trap to clean up both worktrees on exit
+trap 'git worktree remove --force "${WORKTREE_DIR}" 2>/dev/null || true; \
+      git worktree remove --force "${GHPAGES_WORKTREE_DIR}" 2>/dev/null || true' EXIT
 
 echo "Creating worktree for ${TAG_NAME}..."
 git worktree add --quiet "${WORKTREE_DIR}" "${TAG_NAME}"
@@ -43,21 +46,25 @@ if [ ! -d "${DOCS_OUTPUT_DIR}" ]; then
   exit 1
 fi
 
-# Check if gh-pages branch exists locally
+# Check if gh-pages branch exists
 if git show-ref --verify --quiet refs/heads/gh-pages; then
-  echo "Checking out existing gh-pages branch..."
-  git checkout gh-pages
+  echo "Creating worktree for existing gh-pages branch..."
+  git worktree add --quiet "${GHPAGES_WORKTREE_DIR}" gh-pages
 elif git ls-remote --exit-code --heads origin gh-pages > /dev/null 2>&1; then
-  echo "Checking out gh-pages branch from remote..."
-  git checkout -b gh-pages origin/gh-pages
+  echo "Creating worktree for gh-pages branch from remote..."
+  git worktree add --quiet "${GHPAGES_WORKTREE_DIR}" -b gh-pages origin/gh-pages
 else
-  echo "Creating new orphan gh-pages branch..."
+  echo "Creating worktree for new orphan gh-pages branch..."
+  git worktree add --quiet --detach "${GHPAGES_WORKTREE_DIR}"
+  cd "${GHPAGES_WORKTREE_DIR}"
   git checkout --orphan gh-pages
-  # Remove all files from the index
   git rm -rf . > /dev/null 2>&1 || true
-  # Create initial empty commit
   git commit --allow-empty -m "Initial gh-pages commit"
+  cd "${REPO_ROOT}"
 fi
+
+# Change to gh-pages worktree
+cd "${GHPAGES_WORKTREE_DIR}"
 
 # Create versioned directory
 echo "Creating versioned directory: ${TAG_NAME}"
@@ -115,9 +122,5 @@ else
   echo "  Version-specific: https://modelcontextprotocol.github.io/typescript-sdk/${TAG_NAME}/"
   echo "  Latest: https://modelcontextprotocol.github.io/typescript-sdk/latest/"
 fi
-
-# Return to original branch
-echo "Returning to ${CURRENT_BRANCH} branch..."
-git checkout "${CURRENT_BRANCH}"
 
 echo "Done!"
