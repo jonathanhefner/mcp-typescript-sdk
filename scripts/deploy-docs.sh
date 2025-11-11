@@ -89,12 +89,10 @@ else
   echo "Committing documentation for ${TAG_NAME}..."
   git commit -m "Add ${TAG_NAME} docs"
 
-  echo "Pushing to gh-pages branch..."
-  git push origin gh-pages
-
-  echo "Documentation deployed successfully!"
-  echo "Version-specific docs: https://modelcontextprotocol.github.io/typescript-sdk/${TAG_NAME}/"
-  echo "Latest docs: https://modelcontextprotocol.github.io/typescript-sdk/latest/"
+  echo "Documentation committed to gh-pages branch!"
+  echo "Ready to push to deploy docs to:"
+  echo "  Version-specific: https://modelcontextprotocol.github.io/typescript-sdk/${TAG_NAME}/"
+  echo "  Latest: https://modelcontextprotocol.github.io/typescript-sdk/latest/"
 fi
 
 # Return to original branch

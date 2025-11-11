@@ -38,3 +38,6 @@ jobs:
 
             - name: Deploy documentation
               run: ./scripts/deploy-docs.sh ${{ steps.get_tag.outputs.TAG_NAME }}
+
+            - name: Push to gh-pages
+              run: git push origin gh-pages
