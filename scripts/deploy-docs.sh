@@ -105,23 +105,10 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
   # Generate landing page if none exists
   if [ ! -f index.html ] && [ ! -f index.md ]; then
     echo "Generating landing page..."
-    cat > index.html << EOF
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>MCP TypeScript SDK API Documentation</title>
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 800px; margin: auto; padding: 1rem; }
-  </style>
-</head>
-<body>
-  <h1>MCP TypeScript SDK API Documentation</h1>
-  <ul>
-$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -Vr | xargs -I {} printf '<li><a href="%s/">%s</a></li>' {} {})
-  </ul>
-</body>
-</html>
+    cat > index.md << EOF
+# MCP TypeScript SDK API Documentation
+
+$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -Vr | xargs -I {} printf '- [%s](%s/)\n' {} {})
 EOF
   fi
 fi
