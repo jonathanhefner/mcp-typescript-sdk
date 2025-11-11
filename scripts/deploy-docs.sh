@@ -42,7 +42,16 @@ else
   cd "${GHPAGES_WORKTREE_DIR}"
   git checkout --orphan gh-pages
   git rm -rf . > /dev/null 2>&1 || true
-  git commit --allow-empty -m "Initial gh-pages commit"
+
+  # Configure Jekyll for generated docs
+  cat > _config.yml << 'EOF'
+# Include generated files and directories which may start with underscores
+include:
+  - "_*"
+EOF
+
+  git add _config.yml
+  git commit -m "Initial gh-pages commit"
   cd "${REPO_ROOT}"
 fi
 
@@ -83,9 +92,9 @@ fi
 if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
   echo "Updating custom documentation..."
 
-  # Clean up old custom docs from gh-pages root (keep only version directories)
+  # Clean up old custom docs from gh-pages root (keep only version directories and Jekyll config)
   echo "Cleaning gh-pages root..."
-  git ls-tree --name-only HEAD | grep -v '^v[0-9]' | xargs -r git rm -rf
+  git ls-tree --name-only HEAD | grep -v '^v[0-9]' | grep -v '^_config\.yml$' | xargs -r git rm -rf
 
   # Copy custom docs if they exist
   if [ -d "${WORKTREE_DIR}/docs" ]; then
