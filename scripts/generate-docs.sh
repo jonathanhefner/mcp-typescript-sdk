@@ -145,9 +145,7 @@ else
   git commit -m "Add ${TAG_NAME} docs"
 
   echo "Documentation committed to gh-pages branch!"
-  echo "Ready to push to deploy docs to:"
-  echo "  Version-specific: https://modelcontextprotocol.github.io/typescript-sdk/${TAG_NAME}/"
-  echo "  Latest: https://modelcontextprotocol.github.io/typescript-sdk/latest/"
+  echo "Push to remote to deploy to GitHub Pages"
 fi
 
 echo "Done!"
