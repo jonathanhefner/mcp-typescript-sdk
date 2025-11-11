@@ -79,6 +79,21 @@ else
   echo "${TAG_NAME} is not the latest version (latest is ${LATEST_VERSION})"
 fi
 
+# Update custom documentation for latest version
+if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
+  echo "Updating custom documentation..."
+
+  # Clean up old custom docs from gh-pages root (keep only version directories)
+  echo "Cleaning gh-pages root..."
+  git ls-tree --name-only HEAD | grep -v '^v[0-9]' | xargs -r git rm -rf
+
+  # Copy custom docs if they exist
+  if [ -d "${WORKTREE_DIR}/docs" ]; then
+    echo "Copying custom docs from ${WORKTREE_DIR}/docs/..."
+    cp -r "${WORKTREE_DIR}/docs/." "${GHPAGES_WORKTREE_DIR}/"
+  fi
+fi
+
 # Create/update latest redirect
 echo "Creating latest redirect to ${LATEST_VERSION}..."
 mkdir -p latest
@@ -101,7 +116,7 @@ cat > latest/index.html << EOF
 EOF
 
 # Stage all changes
-git add "${TAG_NAME}" latest/index.html
+git add .
 
 # Commit if there are changes
 if git diff --staged --quiet; then
