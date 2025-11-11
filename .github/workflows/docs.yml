@@ -10,6 +10,8 @@ on:
 jobs:
     deploy-docs:
         runs-on: ubuntu-latest
+        # Skip prerelease versions (tags containing hyphens, e.g., v1.2.3-pre1)
+        if: ${{ !contains(github.ref_name, '-') }}
 
         steps:
             - uses: actions/checkout@v4
@@ -27,17 +29,13 @@ jobs:
             - name: Build project
               run: npm run build
 
-            - name: Extract tag name
-              id: get_tag
-              run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
             - name: Configure Git
               run: |
                   git config --global user.name "github-actions[bot]"
                   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Deploy documentation
-              run: ./scripts/deploy-docs.sh ${{ steps.get_tag.outputs.TAG_NAME }}
+              run: ./scripts/deploy-docs.sh ${{ github.ref_name }}
 
             - name: Push to gh-pages
               run: git push origin gh-pages
