@@ -65,3 +65,36 @@ jobs:
             - run: npm publish --provenance --access public
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    publish-docs:
+        runs-on: ubuntu-latest
+        # Skip prerelease versions (tags containing hyphens, e.g., v1.2.3-pre1)
+        if: github.event_name == 'release' && !contains(github.ref_name, '-')
+        needs: [publish]
+
+        permissions:
+            contents: write
+
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0  # Fetch all history for all branches
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: npm
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Configure Git
+              run: |
+                  git config --global user.name "github-actions[bot]"
+                  git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+            - name: Generate documentation
+              run: ./scripts/deploy-docs.sh ${{ github.ref_name }}
+
+            - name: Push to gh-pages
+              run: git push origin gh-pages
