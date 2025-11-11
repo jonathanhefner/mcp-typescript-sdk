@@ -16,7 +16,7 @@ fi
 TAG_NAME="${1}"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 
-echo "Deploying documentation for tag: ${TAG_NAME}"
+echo "Generating documentation for tag: ${TAG_NAME}"
 
 # Create temporary directories for both worktrees
 WORKTREE_DIR=$(mktemp -d)
