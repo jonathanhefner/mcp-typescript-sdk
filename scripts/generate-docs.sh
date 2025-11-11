@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-# Deployment script for TypeDoc documentation to GitHub Pages
-# Usage: ./scripts/deploy-docs.sh <tag-name>
-# Example: ./scripts/deploy-docs.sh v1.21.1
+# Generates API documentation and commits to gh-pages branch
+# Usage: ./scripts/generate-docs.sh <tag-name>
+# Example: ./scripts/generate-docs.sh v1.21.1
 
 # Validate tag name argument
 if [ -z "${1}" ]; then

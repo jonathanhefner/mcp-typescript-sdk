@@ -94,7 +94,7 @@ jobs:
                   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Generate documentation
-              run: ./scripts/deploy-docs.sh ${{ github.ref_name }}
+              run: ./scripts/generate-docs.sh ${{ github.ref_name }}
 
             - name: Push to gh-pages
               run: git push origin gh-pages
