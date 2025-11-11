@@ -58,8 +58,20 @@ mkdir -p "${TAG_NAME}"
 echo "Copying documentation to ${TAG_NAME}/"
 cp -r "${DOCS_OUTPUT_DIR}"/* "${TAG_NAME}/"
 
+# Determine if this tag is the latest version
+echo "Determining if ${TAG_NAME} is the latest version..."
+
+# Get the latest version from all version directories (excluding 'latest')
+LATEST_VERSION=$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -V | tail -n 1)
+
+if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
+  echo "${TAG_NAME} is the latest version"
+else
+  echo "${TAG_NAME} is not the latest version (latest is ${LATEST_VERSION})"
+fi
+
 # Create/update latest redirect
-echo "Creating latest redirect..."
+echo "Creating latest redirect to ${LATEST_VERSION}..."
 mkdir -p latest
 cat > latest/index.html << EOF
 <!DOCTYPE html>
@@ -67,13 +79,13 @@ cat > latest/index.html << EOF
 <head>
   <meta charset="utf-8">
   <title>Redirecting to latest documentation...</title>
-  <meta http-equiv="refresh" content="0; url=../${TAG_NAME}/">
-  <link rel="canonical" href="../${TAG_NAME}/">
+  <meta http-equiv="refresh" content="0; url=../${LATEST_VERSION}/">
+  <link rel="canonical" href="../${LATEST_VERSION}/">
 </head>
 <body>
-  <p>Redirecting to <a href="../${TAG_NAME}/">latest documentation</a>...</p>
+  <p>Redirecting to <a href="../${LATEST_VERSION}/">latest documentation</a>...</p>
   <script>
-    window.location.href = "../${TAG_NAME}/";
+    window.location.href = "../${LATEST_VERSION}/";
   </script>
 </body>
 </html>
