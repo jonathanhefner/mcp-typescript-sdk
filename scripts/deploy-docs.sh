@@ -14,25 +14,34 @@ if [ -z "${1}" ]; then
 fi
 
 TAG_NAME="${1}"
-DOCS_OUTPUT_DIR="./tmp/docs"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+DOCS_OUTPUT_DIR="${REPO_ROOT}/tmp/docs"
+CURRENT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 
 echo "Deploying documentation for tag: ${TAG_NAME}"
 
 # Clean up any previous documentation
 rm -rf "${DOCS_OUTPUT_DIR}"
 
-# Generate TypeDoc documentation into temporary directory
+# Create temporary worktree for the tag
+WORKTREE_DIR=$(mktemp -d)
+trap 'git worktree remove --force "${WORKTREE_DIR}" 2>/dev/null || true' EXIT
+
+echo "Creating worktree for ${TAG_NAME}..."
+git worktree add --quiet "${WORKTREE_DIR}" "${TAG_NAME}"
+
+# Generate TypeDoc documentation from worktree source
 echo "Generating TypeDoc documentation..."
-npm exec typedoc
+npm exec typedoc -- \
+  --options "${REPO_ROOT}/typedoc.json" \
+  --tsconfig "${WORKTREE_DIR}/tsconfig.json" \
+  --entryPoints "${WORKTREE_DIR}/src"
 
 # Ensure docs were generated
 if [ ! -d "${DOCS_OUTPUT_DIR}" ]; then
   echo "Error: Documentation was not generated at ${DOCS_OUTPUT_DIR}"
   exit 1
 fi
-
-# Store current branch
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 # Check if gh-pages branch exists locally
 if git show-ref --verify --quiet refs/heads/gh-pages; then
