@@ -15,12 +15,8 @@ fi
 
 TAG_NAME="${1}"
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-DOCS_OUTPUT_DIR="${REPO_ROOT}/tmp/docs"
 
 echo "Deploying documentation for tag: ${TAG_NAME}"
-
-# Clean up any previous documentation
-rm -rf "${DOCS_OUTPUT_DIR}"
 
 # Create temporary directories for both worktrees
 WORKTREE_DIR=$(mktemp -d)
@@ -32,19 +28,6 @@ trap 'git worktree remove --force "${WORKTREE_DIR}" 2>/dev/null || true; \
 
 echo "Creating worktree for ${TAG_NAME}..."
 git worktree add --quiet "${WORKTREE_DIR}" "${TAG_NAME}"
-
-# Generate TypeDoc documentation from worktree source
-echo "Generating TypeDoc documentation..."
-npm exec typedoc -- \
-  --options "${REPO_ROOT}/typedoc.json" \
-  --tsconfig "${WORKTREE_DIR}/tsconfig.json" \
-  --entryPoints "${WORKTREE_DIR}/src"
-
-# Ensure docs were generated
-if [ ! -d "${DOCS_OUTPUT_DIR}" ]; then
-  echo "Error: Documentation was not generated at ${DOCS_OUTPUT_DIR}"
-  exit 1
-fi
 
 # Check if gh-pages branch exists
 if git show-ref --verify --quiet refs/heads/gh-pages; then
@@ -63,16 +46,26 @@ else
   cd "${REPO_ROOT}"
 fi
 
+# Create target directory for docs
+echo "Creating versioned directory: ${TAG_NAME}"
+mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+
+# Generate TypeDoc documentation directly into gh-pages worktree
+echo "Generating TypeDoc documentation..."
+npm exec typedoc -- \
+  --options "${REPO_ROOT}/typedoc.json" \
+  --tsconfig "${WORKTREE_DIR}/tsconfig.json" \
+  --entryPoints "${WORKTREE_DIR}/src" \
+  --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+
+# Ensure docs were generated
+if [ -z "$(ls -A "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}")" ]; then
+  echo "Error: Documentation was not generated at ${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+  exit 1
+fi
+
 # Change to gh-pages worktree
 cd "${GHPAGES_WORKTREE_DIR}"
-
-# Create versioned directory
-echo "Creating versioned directory: ${TAG_NAME}"
-mkdir -p "${TAG_NAME}"
-
-# Copy generated docs to versioned directory
-echo "Copying documentation to ${TAG_NAME}/"
-cp -r "${DOCS_OUTPUT_DIR}"/* "${TAG_NAME}/"
 
 # Determine if this tag is the latest version
 echo "Determining if ${TAG_NAME} is the latest version..."
