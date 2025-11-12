@@ -11,22 +11,24 @@ set -e
 #
 # HOW IT WORKS:
 #   - Creates isolated git worktrees for the specified tag and gh-pages branch
-#   - Generates documentation into gh-pages in a directory based on the tag name (e.g., v1.2.3/)
+#   - Generates documentation into gh-pages in a directory based on the tag name (e.g., 1.2.3/)
 #   - Copies custom documentation from docs/ into gh-pages root
 #   - Updates the "latest" redirect to point to the most recent version
 #   - If missing, generates a landing page with links to all versions
 #   - Commits changes to gh-pages (does not push automatically)
 #
 # WORKFLOW:
-#   1. Run this script with a tag name: `./scripts/generate-docs.sh v1.2.3`
+#   1. Run this script with a tag name: `./scripts/generate-docs.sh 1.2.3`
 #   2. Script generates docs and commits to local gh-pages branch
 #   3. Push gh-pages branch to deploy: `git push origin gh-pages`
 
+TAG_PREFIX="${TAG_PREFIX:-}"
+
 # Validate tag name argument
-if ! [[ "${1}" =~ ^v[0-9] ]]; then
-  echo "Error: Tag name must be a semantic version starting with 'v'"
+if ! [[ "${1}" =~ ^${TAG_PREFIX}[0-9] ]]; then
+  echo "Error: Tag name must be a semantic version"
   echo "Usage: ${0} <tag-name>"
-  echo "Example: ${0} v1.2.3"
+  echo "Example: ${0} ${TAG_PREFIX}1.2.3"
   exit 1
 fi
 
@@ -111,7 +113,7 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
 
   # Clean up old custom docs from gh-pages root (keep only version directories and Jekyll config)
   echo "Cleaning gh-pages root..."
-  git ls-tree --name-only HEAD | grep -v '^v[0-9]' | grep -v '^_config\.yml$' | xargs -r git rm -rf
+  git ls-tree --name-only HEAD | grep -v "^${TAG_PREFIX}[0-9]" | grep -v '^_config\.yml$' | xargs -r git rm -rf
 
   # Copy custom docs if they exist
   if [ -d "${WORKTREE_DIR}/docs" ]; then
@@ -125,7 +127,7 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
     cat > index.md << EOF
 # MCP TypeScript SDK API Documentation
 
-$(printf '%s\n' */ | grep '^v[0-9]' | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
+$(printf '%s\n' */ | grep "^${TAG_PREFIX}[0-9]" | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
   fi
 fi
