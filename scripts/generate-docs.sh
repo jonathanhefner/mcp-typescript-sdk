@@ -23,8 +23,8 @@ set -e
 #   3. Push gh-pages branch to deploy: `git push origin gh-pages`
 
 # Validate tag name argument
-if [ -z "${1}" ]; then
-  echo "Error: Tag name is required"
+if ! [[ "${1}" =~ ^v[0-9] ]]; then
+  echo "Error: Tag name must be a semantic version starting with 'v'"
   echo "Usage: ${0} <tag-name>"
   echo "Example: ${0} v1.2.3"
   exit 1
