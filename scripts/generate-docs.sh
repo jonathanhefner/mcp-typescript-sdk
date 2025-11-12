@@ -1,15 +1,32 @@
 #!/bin/bash
 set -e
 
-# Generates API documentation and commits to gh-pages branch
-# Usage: ./scripts/generate-docs.sh <tag-name>
-# Example: ./scripts/generate-docs.sh v1.21.1
+# Generates versioned API documentation and commits to gh-pages branch
+#
+# PURPOSE:
+#   This script generates API documentation in the gh-pages branch for a
+#   specific version tag while preserving existing versioned documentation.
+#   This script is invoked by the publish-docs job in the GitHub Actions
+#   workflow (.github/workflows/main.yml) when a release is published.
+#
+# HOW IT WORKS:
+#   - Creates isolated git worktrees for the specified tag and gh-pages branch
+#   - Generates documentation into gh-pages in a directory based on the tag name (e.g., v1.2.3/)
+#   - Copies custom documentation from docs/ into gh-pages root
+#   - Updates the "latest" redirect to point to the most recent version
+#   - If missing, generates a landing page with links to all versions
+#   - Commits changes to gh-pages (does not push automatically)
+#
+# WORKFLOW:
+#   1. Run this script with a tag name: `./scripts/generate-docs.sh v1.2.3`
+#   2. Script generates docs and commits to local gh-pages branch
+#   3. Push gh-pages branch to deploy: `git push origin gh-pages`
 
 # Validate tag name argument
 if [ -z "${1}" ]; then
   echo "Error: Tag name is required"
   echo "Usage: ${0} <tag-name>"
-  echo "Example: ${0} v1.21.1"
+  echo "Example: ${0} v1.2.3"
   exit 1
 fi
 
@@ -59,7 +76,7 @@ fi
 echo "Creating versioned directory: ${TAG_NAME}"
 mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 
-# Install dependencies and generate TypeDoc documentation into gh-pages worktree
+# Generate TypeDoc documentation into gh-pages worktree
 cd "${WORKTREE_DIR}"
 echo "Installing dependencies..."
 npm ci --ignore-scripts
