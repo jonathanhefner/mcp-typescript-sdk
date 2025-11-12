@@ -1,6 +1,5 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": ["src"],
-  "excludeProtected": true,
   "name": "@modelcontextprotocol/sdk"
 }
