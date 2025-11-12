@@ -125,7 +125,7 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
     cat > index.md << EOF
 # MCP TypeScript SDK API Documentation
 
-$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
+$(printf '%s\n' */ | grep '^v[0-9]' | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
   fi
 fi
