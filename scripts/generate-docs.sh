@@ -82,9 +82,13 @@ mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 cd "${WORKTREE_DIR}"
 echo "Installing dependencies..."
 npm ci --ignore-scripts
+
+# Support generating documentation for older tags
 npm install --no-save typedoc
+cp -n "${REPO_ROOT}/typedoc.json" "${REPO_ROOT}/tsconfig.prod.json" . 2>/dev/null || true
+
 echo "Generating TypeDoc documentation..."
-npx typedoc src --entryPointStrategy expand --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+npx typedoc --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 cd "${REPO_ROOT}"
 
 # Ensure docs were generated
