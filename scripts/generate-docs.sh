@@ -59,13 +59,13 @@ fi
 echo "Creating versioned directory: ${TAG_NAME}"
 mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 
-# Generate TypeDoc documentation directly into gh-pages worktree
+# Install dependencies and generate TypeDoc documentation into gh-pages worktree
+cd "${WORKTREE_DIR}"
+echo "Installing dependencies..."
+npm ci --ignore-scripts
 echo "Generating TypeDoc documentation..."
-npm exec typedoc -- \
-  --options "${REPO_ROOT}/typedoc.json" \
-  --tsconfig "${WORKTREE_DIR}/tsconfig.json" \
-  --entryPoints "${WORKTREE_DIR}/src" \
-  --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+npx typedoc src --entryPointStrategy expand --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+cd "${REPO_ROOT}"
 
 # Ensure docs were generated
 if [ -z "$(ls -A "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}")" ]; then
@@ -108,7 +108,7 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
     cat > index.md << EOF
 # MCP TypeScript SDK API Documentation
 
-$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -Vr | xargs -I {} printf '- [%s](%s/)\n' {} {})
+$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
   fi
 fi
