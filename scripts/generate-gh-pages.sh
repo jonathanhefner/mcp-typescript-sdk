@@ -130,7 +130,9 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
   if [ ! -f index.html ] && [ ! -f index.md ]; then
     echo "Generating landing page..."
     cat > index.md << EOF
-# MCP TypeScript SDK API Documentation
+---
+title: MCP TypeScript SDK API Documentation
+---
 
 $(printf '%s\n' */ | grep "^${TAG_PREFIX}[0-9]" | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
