@@ -6,7 +6,7 @@ set -e
 # PURPOSE:
 #   This script generates API documentation in the gh-pages branch for a
 #   specific version tag while preserving existing versioned documentation.
-#   This script is invoked by the publish-docs job in the GitHub Actions
+#   This script is invoked by the publish-gh-pages job in the GitHub Actions
 #   workflow (.github/workflows/main.yml) when a release is published.
 #
 # HOW IT WORKS:
@@ -18,7 +18,7 @@ set -e
 #   - Commits changes to gh-pages (does not push automatically)
 #
 # WORKFLOW:
-#   1. Run this script with a tag name: `./scripts/generate-docs.sh 1.2.3`
+#   1. Run this script with a tag name: `./scripts/generate-gh-pages.sh 1.2.3`
 #   2. Script generates docs and commits to local gh-pages branch
 #   3. Push gh-pages branch to deploy: `git push origin gh-pages`
 

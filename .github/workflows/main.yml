@@ -66,7 +66,7 @@ jobs:
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-    publish-docs:
+    publish-gh-pages:
         runs-on: ubuntu-latest
         # Skip prerelease versions (tags containing hyphens, e.g., v1.2.3-pre1)
         if: github.event_name == 'release' && !contains(github.ref_name, '-')
@@ -94,7 +94,7 @@ jobs:
                   git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Generate documentation
-              run: ./scripts/generate-docs.sh ${{ github.ref_name }}
+              run: ./scripts/generate-gh-pages.sh ${{ github.ref_name }}
 
             - name: Push to gh-pages
               run: git push origin gh-pages
