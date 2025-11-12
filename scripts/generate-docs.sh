@@ -82,6 +82,7 @@ mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 cd "${WORKTREE_DIR}"
 echo "Installing dependencies..."
 npm ci --ignore-scripts
+npm install --no-save typedoc
 echo "Generating TypeDoc documentation..."
 npx typedoc src --entryPointStrategy expand --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
 cd "${REPO_ROOT}"
