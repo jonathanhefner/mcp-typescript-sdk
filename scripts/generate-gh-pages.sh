@@ -64,6 +64,9 @@ else
 
   # Configure Jekyll for generated docs
   cat > _config.yml << 'EOF'
+# Set site title from package name
+title: "@modelcontextprotocol/sdk"
+
 # Include generated files and directories which may start with underscores
 include:
   - "_*"
@@ -130,10 +133,6 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
   if [ ! -f index.html ] && [ ! -f index.md ]; then
     echo "Generating landing page..."
     cat > index.md << EOF
----
-title: MCP TypeScript SDK API Documentation
----
-
 $(printf '%s\n' */ | grep "^${TAG_PREFIX}[0-9]" | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
   fi
