@@ -66,7 +66,7 @@ else
 
   # Configure Jekyll for generated docs
   cat > _config.yml << 'EOF'
-# Set site title from package name
+# Use package name as site title
 title: "@modelcontextprotocol/sdk"
 
 # Include generated files and directories which may start with underscores
