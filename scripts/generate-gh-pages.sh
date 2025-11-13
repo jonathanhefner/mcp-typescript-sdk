@@ -11,24 +11,26 @@ set -e
 #
 # HOW IT WORKS:
 #   - Creates isolated git worktrees for the specified tag and gh-pages branch
-#   - Generates documentation into gh-pages in a directory based on the tag name (e.g., 1.2.3/)
+#   - Generates documentation into gh-pages in a directory based on the tag name (e.g., v1.2.3/)
 #   - Copies custom documentation from docs/ into gh-pages root
 #   - Updates the "latest" redirect to point to the most recent version
 #   - If missing, generates a landing page with links to all versions
 #   - Commits changes to gh-pages (does not push automatically)
 #
 # WORKFLOW:
-#   1. Run this script with a tag name: `./scripts/generate-gh-pages.sh 1.2.3`
+#   1. Run this script with a tag name: `./scripts/generate-gh-pages.sh v1.2.3`
 #   2. Script generates docs and commits to local gh-pages branch
 #   3. Push gh-pages branch to deploy: `git push origin gh-pages`
 
-TAG_PREFIX="${TAG_PREFIX:-}"
-
-# Validate tag name argument
-if ! [[ "${1}" =~ ^${TAG_PREFIX}[0-9] ]]; then
-  echo "Error: Tag name must be a semantic version"
+# Parse semantic version from tag name (ignoring arbitrary prefixes)
+if [[ "${1}" =~ ([0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?)$ ]]; then
+  VERSION="v${BASH_REMATCH[1]}"
+else
+  echo "Error: Must specify a tag name that contains a valid semantic version"
   echo "Usage: ${0} <tag-name>"
-  echo "Example: ${0} ${TAG_PREFIX}1.2.3"
+  echo "Examples:"
+  echo "  ${0} 1.2.3"
+  echo "  ${0} v2.0.0-rc.1"
   exit 1
 fi
 
@@ -78,8 +80,8 @@ EOF
 fi
 
 # Create target directory for docs
-echo "Creating versioned directory: ${TAG_NAME}"
-mkdir -p "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+echo "Creating versioned directory: ${VERSION}"
+mkdir -p "${GHPAGES_WORKTREE_DIR}/${VERSION}"
 
 # Generate TypeDoc documentation into gh-pages worktree
 cd "${WORKTREE_DIR}"
@@ -91,12 +93,12 @@ npm install --no-save typedoc
 cp -n "${REPO_ROOT}/typedoc.json" "${REPO_ROOT}/tsconfig.prod.json" . 2>/dev/null || true
 
 echo "Generating TypeDoc documentation..."
-npx typedoc --out "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+npx typedoc --out "${GHPAGES_WORKTREE_DIR}/${VERSION}"
 cd "${REPO_ROOT}"
 
 # Ensure docs were generated
-if [ -z "$(ls -A "${GHPAGES_WORKTREE_DIR}/${TAG_NAME}")" ]; then
-  echo "Error: Documentation was not generated at ${GHPAGES_WORKTREE_DIR}/${TAG_NAME}"
+if [ -z "$(ls -A "${GHPAGES_WORKTREE_DIR}/${VERSION}")" ]; then
+  echo "Error: Documentation was not generated at ${GHPAGES_WORKTREE_DIR}/${VERSION}"
   exit 1
 fi
 
@@ -104,24 +106,24 @@ fi
 cd "${GHPAGES_WORKTREE_DIR}"
 
 # Determine if this tag is the latest version
-echo "Determining if ${TAG_NAME} is the latest version..."
+echo "Determining if ${VERSION} is the latest version..."
 
 # Get the latest version from all version directories (excluding 'latest')
-LATEST_VERSION=$(printf '%s\n' */ | grep -v '^latest/' | sed 's:/$::' | sort -V | tail -n 1)
+LATEST_VERSION=$(printf '%s\n' */ | grep '^v[0-9]' | sed 's:/$::' | sort -V | tail -n 1)
 
-if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
-  echo "${TAG_NAME} is the latest version"
+if [ "${VERSION}" = "${LATEST_VERSION}" ]; then
+  echo "${VERSION} is the latest version"
 else
-  echo "${TAG_NAME} is not the latest version (latest is ${LATEST_VERSION})"
+  echo "${VERSION} is not the latest version (latest is ${LATEST_VERSION})"
 fi
 
 # Update custom documentation for latest version
-if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
+if [ "${VERSION}" = "${LATEST_VERSION}" ]; then
   echo "Updating custom documentation..."
 
   # Clean up old custom docs from gh-pages root (keep only version directories and Jekyll config)
   echo "Cleaning gh-pages root..."
-  git ls-tree --name-only HEAD | grep -v "^${TAG_PREFIX}[0-9]" | grep -v '^_config\.yml$' | xargs -r git rm -rf
+  git ls-tree --name-only HEAD | grep -v '^v[0-9]' | grep -v '^_config\.yml$' | xargs -r git rm -rf
 
   # Copy custom docs if they exist
   if [ -d "${WORKTREE_DIR}/docs" ]; then
@@ -133,7 +135,7 @@ if [ "${TAG_NAME}" = "${LATEST_VERSION}" ]; then
   if [ ! -f index.html ] && [ ! -f index.md ]; then
     echo "Generating landing page..."
     cat > index.md << EOF
-$(printf '%s\n' */ | grep "^${TAG_PREFIX}[0-9]" | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
+$(printf '%s\n' */ | grep '^v[0-9]' | sed 's:/$::' | sort -Vr | xargs -I {} printf -- '- [%s](%s/)\n' {} {})
 EOF
   fi
 fi
@@ -166,8 +168,8 @@ git add .
 if git diff --staged --quiet; then
   echo "No changes to commit"
 else
-  echo "Committing documentation for ${TAG_NAME}..."
-  git commit -m "Add ${TAG_NAME} docs"
+  echo "Committing documentation for ${VERSION}..."
+  git commit -m "Add ${VERSION} docs"
 
   echo "Documentation committed to gh-pages branch!"
   echo "Push to remote to deploy to GitHub Pages"
