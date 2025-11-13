@@ -68,8 +68,7 @@ jobs:
 
     publish-gh-pages:
         runs-on: ubuntu-latest
-        # Skip prerelease versions (tags containing hyphens, e.g., v1.2.3-pre1)
-        if: github.event_name == 'release' && !contains(github.ref_name, '-')
+        if: github.event_name == 'release'
         needs: [publish]
 
         permissions:
