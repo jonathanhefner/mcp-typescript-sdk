@@ -1,3 +1,7 @@
+---
+title: Server
+---
+
 ## Server overview
 
 This SDK lets you build MCP servers in TypeScript and connect them to different transports. For most use cases you will use `McpServer` from `@modelcontextprotocol/sdk/server/mcp.js` and choose one of:
@@ -8,11 +12,11 @@ This SDK lets you build MCP servers in TypeScript and connect them to different 
 
 For a complete, runnable example server, see:
 
-- [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts) – feature‑rich Streamable HTTP server
-- [`jsonResponseStreamableHttp.ts`](../src/examples/server/jsonResponseStreamableHttp.ts) – Streamable HTTP with JSON response mode
-- [`simpleStatelessStreamableHttp.ts`](../src/examples/server/simpleStatelessStreamableHttp.ts) – stateless Streamable HTTP server
-- [`simpleSseServer.ts`](../src/examples/server/simpleSseServer.ts) – deprecated HTTP+SSE transport
-- [`sseAndStreamableHttpCompatibleServer.ts`](../src/examples/server/sseAndStreamableHttpCompatibleServer.ts) – backwards‑compatible server for old and new clients
+- [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts) – feature‑rich Streamable HTTP server
+- [`jsonResponseStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/jsonResponseStreamableHttp.ts) – Streamable HTTP with JSON response mode
+- [`simpleStatelessStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStatelessStreamableHttp.ts) – stateless Streamable HTTP server
+- [`simpleSseServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleSseServer.ts) – deprecated HTTP+SSE transport
+- [`sseAndStreamableHttpCompatibleServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/sseAndStreamableHttpCompatibleServer.ts) – backwards‑compatible server for old and new clients
 
 ## Transports
 
@@ -27,9 +31,9 @@ Streamable HTTP is the modern, fully featured transport. It supports:
 
 Key examples:
 
-- [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts) – sessions, logging, tasks, elicitation, auth hooks
-- [`jsonResponseStreamableHttp.ts`](../src/examples/server/jsonResponseStreamableHttp.ts) – `enableJsonResponse: true`, no SSE
-- [`standaloneSseWithGetStreamableHttp.ts`](../src/examples/server/standaloneSseWithGetStreamableHttp.ts) – notifications with Streamable HTTP GET + SSE
+- [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts) – sessions, logging, tasks, elicitation, auth hooks
+- [`jsonResponseStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/jsonResponseStreamableHttp.ts) – `enableJsonResponse: true`, no SSE
+- [`standaloneSseWithGetStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/standaloneSseWithGetStreamableHttp.ts) – notifications with Streamable HTTP GET + SSE
 
 See the MCP spec for full transport details: `https://modelcontextprotocol.io/specification/2025-11-25/basic/transports`
 
@@ -42,8 +46,8 @@ Streamable HTTP can run:
 
 Examples:
 
-- Stateless Streamable HTTP: [`simpleStatelessStreamableHttp.ts`](../src/examples/server/simpleStatelessStreamableHttp.ts)
-- Stateful with resumability: [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts)
+- Stateless Streamable HTTP: [`simpleStatelessStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStatelessStreamableHttp.ts)
+- Stateful with resumability: [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts)
 
 ### Deprecated HTTP + SSE
 
@@ -51,15 +55,14 @@ The older HTTP+SSE transport (protocol version 2024‑11‑05) is supported only
 
 Examples:
 
-- Legacy SSE server: [`simpleSseServer.ts`](../src/examples/server/simpleSseServer.ts)
-- Backwards‑compatible server (Streamable HTTP + SSE):  
-  [`sseAndStreamableHttpCompatibleServer.ts`](../src/examples/server/sseAndStreamableHttpCompatibleServer.ts)
+- Legacy SSE server: [`simpleSseServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleSseServer.ts)
+- Backwards‑compatible server (Streamable HTTP + SSE): [`sseAndStreamableHttpCompatibleServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/sseAndStreamableHttpCompatibleServer.ts)
 
 ## Running your server
 
 For a minimal “getting started” experience:
 
-1. Start from [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts).
+1. Start from [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts).
 2. Remove features you do not need (tasks, advanced logging, OAuth, etc.).
 3. Register your own tools, resources and prompts.
 
@@ -125,8 +128,8 @@ server.registerTool(
 
 This snippet is illustrative only; for runnable servers that expose tools, see:
 
-- [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts)
-- [`toolWithSampleServer.ts`](../src/examples/server/toolWithSampleServer.ts)
+- [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts)
+- [`toolWithSampleServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/toolWithSampleServer.ts)
 
 #### ResourceLink outputs
 
@@ -157,7 +160,7 @@ server.registerResource(
 
 Dynamic resources use `ResourceTemplate` and can support completions on path parameters. For full runnable examples of resources:
 
-- [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts)
+- [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts)
 
 ### Prompts
 
@@ -189,13 +192,13 @@ server.registerPrompt(
 
 For prompts integrated into a full server, see:
 
-- [`simpleStreamableHttp.ts`](../src/examples/server/simpleStreamableHttp.ts)
+- [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/simpleStreamableHttp.ts)
 
 ### Completions
 
 Both prompts and resources can support argument completions. On the client side, you use `client.complete()` with a reference to the prompt or resource and the partially‑typed argument.
 
-See the MCP spec sections on prompts and resources for complete details, and [`simpleStreamableHttp.ts`](../src/examples/client/simpleStreamableHttp.ts) for client‑side usage patterns.
+See the MCP spec sections on prompts and resources for complete details, and [`simpleStreamableHttp.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/client/simpleStreamableHttp.ts) for client‑side usage patterns.
 
 ### Display names and metadata
 
@@ -205,21 +208,21 @@ Tools, resources and prompts support a `title` field for human‑readable names.
 
 ## Multi‑node deployment patterns
 
-The SDK supports multi‑node deployments using Streamable HTTP. The high‑level patterns are documented in [`README.md`](../src/examples/README.md):
+The SDK supports multi‑node deployments using Streamable HTTP. The high‑level patterns are documented in [`README.md`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/README.md):
 
 - Stateless mode (any node can handle any request)
 - Persistent storage mode (shared database for session state)
 - Local state with message routing (message queue + pub/sub)
 
-Those deployment diagrams are kept in [`README.md`](../src/examples/README.md) so the examples and documentation stay aligned.
+Those deployment diagrams are kept in [`README.md`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/README.md) so the examples and documentation stay aligned.
 
 ## Backwards compatibility
 
 To handle both modern and legacy clients:
 
 - Run a backwards‑compatible server:
-    - [`sseAndStreamableHttpCompatibleServer.ts`](../src/examples/server/sseAndStreamableHttpCompatibleServer.ts)
+    - [`sseAndStreamableHttpCompatibleServer.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/server/sseAndStreamableHttpCompatibleServer.ts)
 - Use a client that falls back from Streamable HTTP to SSE:
-    - [`streamableHttpWithSseFallbackClient.ts`](../src/examples/client/streamableHttpWithSseFallbackClient.ts)
+    - [`streamableHttpWithSseFallbackClient.ts`](https://github.com/modelcontextprotocol/typescript-sdk/blob/main/src/examples/client/streamableHttpWithSseFallbackClient.ts)
 
 For the detailed protocol rules, see the “Backwards compatibility” section of the MCP spec.
