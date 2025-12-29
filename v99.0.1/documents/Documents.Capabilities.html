@@ -1,0 +1,62 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>Capabilities | MCP TypeScript SDK</title><meta name="description" content="Documentation for MCP TypeScript SDK"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">MCP TypeScript SDK</a><div id="tsd-toolbar-links"></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="Documents.html">Documents</a></li><li><a href="" aria-current="page">Capabilities</a></li></ul></div><div class="tsd-panel tsd-typography"><h2 id="sampling" class="tsd-anchor-link">Sampling<a href="#sampling" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2><p>MCP servers can request LLM completions from connected clients that support the sampling capability. This lets your tools offload summarisation or generation to the client’s model.</p>
+<p>For a runnable server that combines tools, logging and tasks, see:</p>
+<ul>
+<li><a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/server/src/toolWithSampleServer.ts"><code>toolWithSampleServer.ts</code></a></li>
+</ul>
+<p>In practice you will:</p>
+<ul>
+<li>Declare the sampling capability on the client.</li>
+<li>Call <code>server.server.createMessage(...)</code> from within a tool handler.</li>
+<li>Return the model’s response as structured content and/or text.</li>
+</ul>
+<p>Refer to the MCP spec’s sampling section for full request/response details.</p>
+<h2 id="elicitation" class="tsd-anchor-link">Elicitation<a href="#elicitation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2><h3 id="form-elicitation" class="tsd-anchor-link">Form elicitation<a href="#form-elicitation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><p>Form elicitation lets a tool ask the user for additional, <strong>non‑sensitive</strong> information via a schema‑driven form. The server sends a schema and message, and the client is responsible for collecting and returning the data.</p>
+<p>Runnable example:</p>
+<ul>
+<li>Server: <a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/server/src/elicitationFormExample.ts"><code>elicitationFormExample.ts</code></a></li>
+<li>Client‑side handling: <a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/client/src/simpleStreamableHttp.ts"><code>simpleStreamableHttp.ts</code></a></li>
+</ul>
+<p>The <code>simpleStreamableHttp</code> server also includes a <code>collect-user-info</code> tool that demonstrates how to drive elicitation from a tool and handle the response.</p>
+<h3 id="url-elicitation" class="tsd-anchor-link">URL elicitation<a href="#url-elicitation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><p>URL elicitation is designed for sensitive data and secure web‑based flows (e.g., collecting an API key, confirming a payment, or doing third‑party OAuth). Instead of returning form data, the server asks the client to open a URL and the rest of the flow happens in the browser.</p>
+<p>Runnable example:</p>
+<ul>
+<li>Server: <a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/server/src/elicitationUrlExample.ts"><code>elicitationUrlExample.ts</code></a></li>
+<li>Client: <a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/client/src/elicitationUrlExample.ts"><code>elicitationUrlExample.ts</code></a></li>
+</ul>
+<p>Key points:</p>
+<ul>
+<li>Use <code>mode: 'url'</code> when calling <code>server.server.elicitInput(...)</code>.</li>
+<li>Implement a client‑side handler for <code>ElicitRequestSchema</code> that:
+<ul>
+<li>Shows the full URL and reason to the user.</li>
+<li>Asks for explicit consent.</li>
+<li>Opens the URL in the system browser.</li>
+</ul>
+</li>
+</ul>
+<p>Sensitive information <strong>must not</strong> be collected via form elicitation; always use URL elicitation or out‑of‑band flows for secrets.</p>
+<h2 id="task-based-execution-experimental" class="tsd-anchor-link">Task-based execution (experimental)<a href="#task-based-execution-experimental" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2><p>Task-based execution enables “call-now, fetch-later” patterns for long-running operations. Instead of returning a result immediately, a tool creates a task that can be polled or resumed later.</p>
+<p>The APIs live under the experimental <code>.experimental.tasks</code> namespace and may change without notice.</p>
+<h3 id="server-side-concepts" class="tsd-anchor-link">Server-side concepts<a href="#server-side-concepts" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><p>On the server you will:</p>
+<ul>
+<li>Provide a <code>TaskStore</code> implementation that persists task metadata and results.</li>
+<li>Enable the <code>tasks</code> capability when constructing the server.</li>
+<li>Register tools with <code>server.experimental.tasks.registerToolTask(...)</code>.</li>
+</ul>
+<p>For a runnable example that uses the in-memory store shipped with the SDK, see:</p>
+<ul>
+<li><a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/server/src/toolWithSampleServer.ts"><code>toolWithSampleServer.ts</code></a></li>
+<li><code>packages/core/src/experimental/tasks/stores/in-memory.ts</code></li>
+</ul>
+<h3 id="client-side-usage" class="tsd-anchor-link">Client-side usage<a href="#client-side-usage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><p>On the client, you use:</p>
+<ul>
+<li><code>client.experimental.tasks.callToolStream(...)</code> to start a tool call that may create a task and emit status updates over time.</li>
+<li><code>client.getTask(...)</code> and <code>client.getTaskResult(...)</code> to check status and fetch results after reconnecting.</li>
+</ul>
+<p>The interactive client in:</p>
+<ul>
+<li><a href="https://github.com/modelcontextprotocol/typescript-sdk/blob/main/examples/client/src/simpleStreamableHttp.ts"><code>simpleStreamableHttp.ts</code></a></li>
+</ul>
+<p>includes commands to demonstrate calling tools that support tasks and handling their lifecycle.</p>
+<p>See the MCP spec’s tasks section and the example server/client above for a full walkthrough of the task status lifecycle and TTL handling.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#sampling"><span>Sampling</span></a><a href="#elicitation"><span>Elicitation</span></a><ul><li><a href="#form-elicitation"><span>Form elicitation</span></a></li><li><a href="#url-elicitation"><span>URL elicitation</span></a></li></ul><a href="#task-based-execution-experimental"><span>Task-<wbr/>based execution (experimental)</span></a><ul><li><a href="#server-side-concepts"><span>Server-<wbr/>side concepts</span></a></li><li><a href="#client-side-usage"><span>Client-<wbr/>side usage</span></a></li></ul></div></details></div><div class="site-menu"><nav class="tsd-navigation"><a href="../modules.html">MCP TypeScript SDK</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></footer><div class="overlay"></div></body></html>
