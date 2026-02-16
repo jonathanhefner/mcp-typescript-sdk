@@ -27,7 +27,6 @@ import {
     StdioClientTransport,
     StreamableHTTPClientTransport
 } from '@modelcontextprotocol/client';
-
 ```
 
 ## Connecting to a server

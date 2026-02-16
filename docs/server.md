@@ -24,7 +24,6 @@ import { NodeStreamableHTTPServerTransport } from '@modelcontextprotocol/node';
 import type { CallToolResult, ResourceLink } from '@modelcontextprotocol/server';
 import { completable, McpServer, ResourceTemplate, StdioServerTransport } from '@modelcontextprotocol/server';
 import * as z from 'zod/v4';
-
 ```
 
 ## Transports
